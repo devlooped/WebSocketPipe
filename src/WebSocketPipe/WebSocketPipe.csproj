@@ -5,11 +5,16 @@
     <RootNamespace>Devlooped</RootNamespace>
     <PackageId>WebSocketPipe</PackageId>
     <Description>A System.IO.Pipelines adapter API over System.Net.WebSockets</Description>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="System.IO.Pipelines" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\readme.md" Link="readme.md" Pack="true" PackagePath="readme.md" />
   </ItemGroup>
 
 </Project>
