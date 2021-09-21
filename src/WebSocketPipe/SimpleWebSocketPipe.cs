@@ -44,7 +44,7 @@ namespace Devlooped
         public async Task RunAsync(CancellationToken cancellation = default)
         {
             if (webSocket.State != WebSocketState.Open)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"WebSocket must be opened. State was {webSocket.State}");
 
             var writing = FillInputAsync(cancellation);
             var reading = SendOutputAsync(cancellation);
@@ -162,7 +162,7 @@ namespace Devlooped
                         }
                     }
 
-                    outputPipe.Reader.AdvanceTo(result.Buffer.Start, result.Buffer.End);
+                    outputPipe.Reader.AdvanceTo(result.Buffer.End);
 
                 }
                 catch (Exception ex) when (ex is OperationCanceledException ||

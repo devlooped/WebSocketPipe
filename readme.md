@@ -18,18 +18,37 @@ await client.ConnectAsync(serverUri, CancellationToken.None);
 
 using IWebSocketPipe pipe = WebSocketPipe.Create(client, closeWhenCompleted: true);
 
-var read = Task.Run(async () =>
-{
-    var read = await pipe.Input.ReadAsync();
-    Output.WriteLine("Client: " + Encoding.UTF8.GetString(read.Buffer));
-    await pipe.CompleteAsync(WebSocketCloseStatus.NormalClosure, "Client Done");
-});
-
+// Start the pipe before hooking up the processing
 var run = pipe.RunAsync();
 
-await pipe.Output.WriteAsync(Encoding.UTF8.GetBytes("hello").AsMemory());
+// Wait for completion of processing code
+await Task.WhenAny(
+    ReadIncoming(pipe.Input),
+    SendOutgoing(pipe.Output));
 
+// When the processing completes, the overall pipe run will also complete
+await run;
 
+// Reads incoming data and writes to the console
+async Task ReadIncoming(PipeReader reader)
+{
+    while (await reader.ReadAsync() is var result && !result.IsCompleted)
+    {
+        Console.WriteLine($"Received: {Encoding.UTF8.GetString(result.Buffer)}");
+        reader.AdvanceTo(result.Buffer.Start, result.Buffer.End);
+    }
+    Console.WriteLine($"Done reading.");
+}
 
+// Reads console input and writes to pipe until an empty line is entered
+async Task SendOutgoing(PipeWriter writer)
+{
+    while (Console.ReadLine() is var line && line?.Length > 0)
+    {
+        Encoding.UTF8.GetBytes(line, writer);
+    }
+    await writer.CompleteAsync();
+    Console.WriteLine($"Done writing.");
+}
 ```
 

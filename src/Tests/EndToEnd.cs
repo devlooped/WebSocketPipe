@@ -28,7 +28,10 @@ namespace Devlooped
 
             var run = pipe.RunAsync();
 
-            await pipe.Output.WriteAsync(Encoding.UTF8.GetBytes("hello").AsMemory());
+            pipe.Output.Advance(Encoding.UTF8.GetBytes("hello", pipe.Output.GetSpan()));
+            await pipe.Output.FlushAsync();
+
+            //await pipe.Output.WriteAsync(Encoding.UTF8.GetBytes("hello").AsMemory());
 
             await read;
             await run;
@@ -44,7 +47,7 @@ namespace Devlooped
                 Output.WriteLine($"Echoing: {Encoding.UTF8.GetString(result.Buffer)}");
                 // Just assume we get a single-segment entry, for simplicity
                 await pipe.Output.WriteAsync(result.Buffer.First);
-                pipe.Input.AdvanceTo(result.Buffer.Start, result.Buffer.End);
+                pipe.Input.AdvanceTo(result.Buffer.End);
             }
             Output.WriteLine($"Server: Done.");
         }

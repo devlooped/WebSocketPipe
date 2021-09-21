@@ -176,7 +176,7 @@ namespace Devlooped
                     for (var i = 0; i < result.Buffer.Length; i++)
                         await s.SendAsync(result.Buffer.Slice(i, 1).First, WebSocketMessageType.Binary, i == result.Buffer.Length - 1, default);
 
-                    serverPipe.Input.AdvanceTo(result.Buffer.Start, result.Buffer.End);
+                    serverPipe.Input.AdvanceTo(result.Buffer.End);
                 }
                 await serverRun;
             }, null, Output);
@@ -198,7 +198,7 @@ namespace Devlooped
             while (await pipe.Input.ReadAsync() is var result && !result.IsCompleted)
             {
                 await pipe.Output.WriteAsync(result.Buffer.First);
-                pipe.Input.AdvanceTo(result.Buffer.Start, result.Buffer.End);
+                pipe.Input.AdvanceTo(result.Buffer.End);
             }
         }
     }
