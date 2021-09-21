@@ -21,6 +21,12 @@ jobs:
           submodules: recursive
           fetch-depth: 0
           
+      - name: ⚙ dotnet 6.0.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+          include-prerelease: true
+
       - name: 🙏 build
         run: dotnet build -m:1 -p:version=${GITHUB_REF#refs/*/v}
 
