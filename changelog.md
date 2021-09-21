@@ -1,8 +1,8 @@
 
 
-## [v0.6.1](https://github.com/devlooped/WebSocketPipe/tree/v0.6.1) (2021-09-21)
+## [v0.6.2](https://github.com/devlooped/WebSocketPipe/tree/v0.6.2) (2021-09-21)
 
-[Full Changelog](https://github.com/devlooped/WebSocketPipe/compare/v0.6.0...v0.6.1)
+[Full Changelog](https://github.com/devlooped/WebSocketPipe/compare/v0.6.0...v0.6.2)
 
 ## [v0.6.0](https://github.com/devlooped/WebSocketPipe/tree/v0.6.0) (2021-09-21)
 
