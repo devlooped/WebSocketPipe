@@ -96,10 +96,8 @@ app.Use(async (context, next) =>
     {
         if (context.WebSockets.IsWebSocketRequest)
         {
-            using var websocket = await context.WebSockets.AcceptWebSocketAsync(
-                context.WebSockets.WebSocketRequestedProtocols.FirstOrDefault());
-
-            using var pipe = WebSocketPipe.Create(websocket, options);
+            using var websocket = await context.WebSockets.AcceptWebSocketAsync();
+            using var pipe = WebSocketPipe.Create(websocket, true);
             await Task.WhenAll(Echo(pipe), pipe.RunAsync(context.RequestAborted));
         }
         else
