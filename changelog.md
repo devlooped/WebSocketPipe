@@ -1,5 +1,13 @@
 
 
+## [v0.5.1](https://github.com/devlooped/WebSocketPipe/tree/v0.5.1) (2021-09-21)
+
+[Full Changelog](https://github.com/devlooped/WebSocketPipe/compare/v0.5.0...v0.5.1)
+
+:sparkles: Implemented enhancements:
+
+- Include readme in package [\#2](https://github.com/devlooped/WebSocketPipe/issues/2)
+
 ## [v0.5.0](https://github.com/devlooped/WebSocketPipe/tree/v0.5.0) (2021-09-21)
 
 [Full Changelog](https://github.com/devlooped/WebSocketPipe/compare/b8c36a2781d58c62c7b6577ee8dde808f45371f0...v0.5.0)
