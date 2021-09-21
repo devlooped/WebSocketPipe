@@ -90,9 +90,9 @@ await pipe.CompleteAsync(WebSocketCloseStatus.NormalClosure, "Done processing");
 
 Specifying a close status will always close the underlying socket.
 
-You can also use it on the server. This example is basically taken from 
-the documentation on [WebSockets in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets?view=aspnetcore-5.0#configure-the-middleware) 
-and adapted to use a `WebSocketPipe` to read/write to the client:
+The `WebSocketPipe` can also be used on the server. The following example is basically 
+taken from the documentation on [WebSockets in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets?view=aspnetcore-5.0#configure-the-middleware) 
+and adapted to use a `WebSocketPipe` to echo messages to the client:
 
 ```csharp
 app.Use(async (context, next) =>
@@ -101,9 +101,7 @@ app.Use(async (context, next) =>
     {
         if (context.WebSockets.IsWebSocketRequest)
         {
-            using var websocket = await context.WebSockets.AcceptWebSocketAsync(
-                context.WebSockets.WebSocketRequestedProtocols.FirstOrDefault());
-
+            using var websocket = await context.WebSockets.AcceptWebSocketAsync();
             using var pipe = WebSocketPipe.Create(websocket, options);
             await Task.WhenAll(Echo(pipe), pipe.RunAsync(context.RequestAborted));
         }
