@@ -12,7 +12,7 @@ namespace Devlooped
         public async Task WhenWebSocketNotOpen_ThenThrowsAsync()
         {
             IWebSocketPipe pipe = WebSocketPipe.Create(new ClientWebSocket());
-            await Assert.ThrowsAsync<InvalidOperationException>(() => pipe.RunAsync());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => pipe.RunAsync().AsTask());
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace Devlooped
             using var pipe = WebSocketPipe.Create(socket);
 
             await Task.WhenAll(
-                pipe.RunAsync(server.Cancellation.Token),
+                pipe.RunAsync(server.Cancellation.Token).AsTask(),
                 Task.Delay(100).ContinueWith(_ => server.Cancellation.Cancel()));
         }
 
@@ -41,7 +41,9 @@ namespace Devlooped
 
             await server.DisposeAsync();
 
-            Task.WaitAny(run, Task.Delay(100).ContinueWith(_ => throw new TimeoutException()));
+            Task.WaitAny(
+                run.AsTask(),
+                Task.Delay(100).ContinueWith(_ => throw new TimeoutException()));
         }
 
         [Fact]

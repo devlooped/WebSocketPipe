@@ -41,7 +41,7 @@ namespace Devlooped
 
         public string? SubProtocol => webSocket.SubProtocol;
 
-        public async Task RunAsync(CancellationToken cancellation = default)
+        public async ValueTask RunAsync(CancellationToken cancellation = default)
         {
             if (webSocket.State != WebSocketState.Open)
                 throw new InvalidOperationException($"WebSocket must be opened. State was {webSocket.State}");
@@ -51,10 +51,13 @@ namespace Devlooped
 
             // NOTE: when both are completed, the CompleteAsync will be called automatically 
             // by both writing and reading, so we ensure CloseWhenCompleted is performed.
-            await Task.WhenAll(reading, writing);
+
+            // TODO: replace with ValueTask.WhenAll if/when it ships. 
+            // See https://github.com/dotnet/runtime/issues/23625
+            await Task.WhenAll(reading.AsTask(), writing.AsTask());
         }
 
-        public async Task CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null)
+        public async ValueTask CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null)
         {
             if (completed)
                 return;
@@ -87,7 +90,7 @@ namespace Devlooped
             await Task.WhenAny(closeTask, Task.Delay(closeTimeout));
         }
 
-        async Task FillInputAsync(CancellationToken cancellation)
+        async ValueTask FillInputAsync(CancellationToken cancellation)
         {
             while (webSocket.State == WebSocketState.Open && !cancellation.IsCancellationRequested)
             {
@@ -126,7 +129,7 @@ namespace Devlooped
             await CompleteAsync(webSocket.CloseStatus, webSocket.CloseStatusDescription);
         }
 
-        async Task SendOutputAsync(CancellationToken cancellation)
+        async ValueTask SendOutputAsync(CancellationToken cancellation)
         {
             while (webSocket.State == WebSocketState.Open && !cancellation.IsCancellationRequested)
             {

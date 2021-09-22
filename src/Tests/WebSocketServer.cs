@@ -1,5 +1,4 @@
-﻿using System.IO.Pipelines;
-using System.Net;
+﻿using System.Net;
 using System.Net.WebSockets;
 using Xunit.Abstractions;
 
@@ -52,7 +51,7 @@ namespace Devlooped
                     if (pipeBehavior != null)
                     {
                         using var pipe = WebSocketPipe.Create(websocket, options);
-                        await Task.WhenAll(pipeBehavior(pipe), pipe.RunAsync(cts.Token));
+                        await Task.WhenAll(pipeBehavior(pipe), pipe.RunAsync(cts.Token).AsTask());
                     }
                     else if (socketBehavior != null)
                     {

@@ -41,7 +41,7 @@ namespace Devlooped
         /// <param name="closeStatusDescription">Optional close status description to use if the underlying 
         /// <see cref="WebSocket"/> is closed.</param>
         /// <returns></returns>
-        public Task CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null);
+        public ValueTask CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null);
 
         /// <summary>
         /// Starts populating the <see cref="IDuplexPipe.Input"/> with incoming data from the underlying 
@@ -54,6 +54,6 @@ namespace Devlooped
         /// <see cref="IDuplexPipe.Output"/> are completed, or an explicit invocation of <see cref="CompleteAsync"/> 
         /// is executed.
         /// </returns>
-        public Task RunAsync(CancellationToken cancellation = default);
+        public ValueTask RunAsync(CancellationToken cancellation = default);
     }
 }
