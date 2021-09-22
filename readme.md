@@ -11,7 +11,7 @@ High-performance System.IO.Pipelines API adapter for System.Net.WebSockets
 # Usage
 
 ```csharp
-using Devlooped;
+using Devlooped.Net;
 
 var client = new ClientWebSocket();
 await client.ConnectAsync(serverUri, CancellationToken.None);

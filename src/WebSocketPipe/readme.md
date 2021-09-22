@@ -5,7 +5,7 @@
 # Usage
 
 ```csharp
-using Devlooped;
+using Devlooped.Net;
 
 var client = new ClientWebSocket();
 await client.ConnectAsync(serverUri, CancellationToken.None);

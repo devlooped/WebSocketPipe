@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <RootNamespace>Devlooped</RootNamespace>
+    <RootNamespace>Devlooped.Net</RootNamespace>
     <PackageId>WebSocketPipe</PackageId>
     <Description>High-performance System.IO.Pipelines API adapter for System.Net.WebSockets</Description>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
