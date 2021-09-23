@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Pipelines;
 using System.Net.WebSockets;
 using System.Threading;
@@ -15,8 +16,9 @@ class SimpleWebSocketPipe : IWebSocketPipe
     // Wait 250 ms before giving up on a Close, same as SignalR WebSocketHandler
     static readonly TimeSpan closeTimeout = TimeSpan.FromMilliseconds(250);
 
+    readonly CancellationTokenSource disposeCancellation = new CancellationTokenSource();
     readonly Pipe inputPipe;
-    readonly Pipe outputPipe;
+    readonly PipeWriter outputWriter;
 
     readonly WebSocket webSocket;
     readonly WebSocketPipeOptions options;
@@ -24,14 +26,18 @@ class SimpleWebSocketPipe : IWebSocketPipe
     bool completed;
 
     public SimpleWebSocketPipe(WebSocket webSocket, WebSocketPipeOptions options)
-        => (this.webSocket, this.options, inputPipe, outputPipe)
-        = (webSocket, options, new Pipe(options.InputPipeOptions), new Pipe(options.OutputPipeOptions));
+    {
+        this.webSocket = webSocket;
+        this.options = options;
+        inputPipe = new Pipe(options.InputPipeOptions);
+        outputWriter = PipeWriter.Create(new WebSocketStream(webSocket));
+    }
 
     bool IsClient => webSocket is ClientWebSocket;
 
     public PipeReader Input => inputPipe.Reader;
 
-    public PipeWriter Output => outputPipe.Writer;
+    public PipeWriter Output => outputWriter;
 
     public WebSocketCloseStatus? CloseStatus => webSocket.CloseStatus;
 
@@ -41,23 +47,16 @@ class SimpleWebSocketPipe : IWebSocketPipe
 
     public string? SubProtocol => webSocket.SubProtocol;
 
-    public async ValueTask RunAsync(CancellationToken cancellation = default)
+    public Task RunAsync(CancellationToken cancellation = default)
     {
         if (webSocket.State != WebSocketState.Open)
             throw new InvalidOperationException($"WebSocket must be opened. State was {webSocket.State}");
 
-        var writing = FillInputAsync(cancellation);
-        var reading = SendOutputAsync(cancellation);
-
-        // NOTE: when both are completed, the CompleteAsync will be called automatically 
-        // by both writing and reading, so we ensure CloseWhenCompleted is performed.
-
-        // TODO: replace with ValueTask.WhenAll if/when it ships. 
-        // See https://github.com/dotnet/runtime/issues/23625
-        await Task.WhenAll(reading.AsTask(), writing.AsTask());
+        var combined = CancellationTokenSource.CreateLinkedTokenSource(cancellation, disposeCancellation.Token);
+        return ReadInputAsync(combined.Token);
     }
 
-    public async ValueTask CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null)
+    public async Task CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null)
     {
         if (completed)
             return;
@@ -68,14 +67,11 @@ class SimpleWebSocketPipe : IWebSocketPipe
         await inputPipe.Writer.CompleteAsync();
         await inputPipe.Reader.CompleteAsync();
 
-        await outputPipe.Writer.CompleteAsync();
-        await outputPipe.Reader.CompleteAsync();
-
         if (options.CloseWhenCompleted || closeStatus != null)
             await CloseAsync(closeStatus ?? WebSocketCloseStatus.NormalClosure, closeStatusDescription ?? "");
     }
 
-    async ValueTask CloseAsync(WebSocketCloseStatus closeStatus, string closeStatusDescription)
+    async Task CloseAsync(WebSocketCloseStatus closeStatus, string closeStatusDescription)
     {
         var state = State;
         if (state == WebSocketState.Closed || state == WebSocketState.CloseSent || state == WebSocketState.Aborted)
@@ -90,7 +86,7 @@ class SimpleWebSocketPipe : IWebSocketPipe
         await Task.WhenAny(closeTask, Task.Delay(closeTimeout));
     }
 
-    async ValueTask FillInputAsync(CancellationToken cancellation)
+    async Task ReadInputAsync(CancellationToken cancellation)
     {
         while (webSocket.State == WebSocketState.Open && !cancellation.IsCancellationRequested)
         {
@@ -129,56 +125,31 @@ class SimpleWebSocketPipe : IWebSocketPipe
         await CompleteAsync(webSocket.CloseStatus, webSocket.CloseStatusDescription);
     }
 
-    async ValueTask SendOutputAsync(CancellationToken cancellation)
+    public void Dispose()
     {
-        while (webSocket.State == WebSocketState.Open && !cancellation.IsCancellationRequested)
-        {
-            try
-            {
-                var result = await outputPipe.Reader.ReadAsync(cancellation);
-                if (result.IsCompleted || result.IsCanceled)
-                    break;
-
-                if (result.Buffer.IsSingleSegment)
-                {
-                    await webSocket.SendAsync(result.Buffer.First, WebSocketMessageType.Binary, true, cancellation);
-                }
-                else
-                {
-                    var enumerator = result.Buffer.GetEnumerator();
-                    if (enumerator.MoveNext())
-                    {
-                        // NOTE: we don't use the cancellation here because we don't want to send 
-                        // partial messages from an already completely read buffer. 
-                        while (true)
-                        {
-                            var current = enumerator.Current;
-                            if (default(ReadOnlyMemory<byte>).Equals(current))
-                                break;
-
-                            // Peek next to see if we should send an end of message
-                            if (enumerator.MoveNext())
-                                await webSocket.SendAsync(current, WebSocketMessageType.Binary, false, cancellation);
-                            else
-                                await webSocket.SendAsync(current, WebSocketMessageType.Binary, true, cancellation);
-                        }
-                    }
-                }
-
-                outputPipe.Reader.AdvanceTo(result.Buffer.End);
-
-            }
-            catch (Exception ex) when (ex is OperationCanceledException ||
-                                       ex is WebSocketException ||
-                                       ex is InvalidOperationException)
-            {
-                break;
-            }
-        }
-
-        // Preserve the close status since it might be triggered by a received Close message containing the status and description.
-        await CompleteAsync(webSocket.CloseStatus, webSocket.CloseStatusDescription);
+        disposeCancellation.Cancel();
+        webSocket.Dispose();
     }
 
-    public void Dispose() => webSocket.Dispose();
+    class WebSocketStream : Stream
+    {
+        readonly WebSocket webSocket;
+
+        public WebSocketStream(WebSocket webSocket) => this.webSocket = webSocket;
+
+        public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+            => webSocket.SendAsync(buffer, WebSocketMessageType.Binary, true, cancellationToken);
+
+        public override Task FlushAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public override bool CanRead => throw new NotImplementedException();
+        public override bool CanSeek => throw new NotImplementedException();
+        public override bool CanWrite => throw new NotImplementedException();
+        public override long Length => throw new NotImplementedException();
+        public override long Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override void Flush() => throw new NotImplementedException();
+        public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+        public override void SetLength(long value) => throw new NotImplementedException();
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+    }
 }

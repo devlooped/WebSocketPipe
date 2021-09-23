@@ -12,7 +12,7 @@ public record SimpleWebSocketPipeTests(ITestOutputHelper Output)
     public async Task WhenWebSocketNotOpen_ThenThrowsAsync()
     {
         IWebSocketPipe pipe = WebSocketPipe.Create(new ClientWebSocket());
-        await Assert.ThrowsAsync<InvalidOperationException>(() => pipe.RunAsync().AsTask());
+        await Assert.ThrowsAsync<InvalidOperationException>(() => pipe.RunAsync());
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public record SimpleWebSocketPipeTests(ITestOutputHelper Output)
         using var pipe = WebSocketPipe.Create(socket);
 
         await Task.WhenAll(
-            pipe.RunAsync(server.Cancellation.Token).AsTask(),
+            pipe.RunAsync(server.Cancellation.Token),
             Task.Delay(100).ContinueWith(_ => server.Cancellation.Cancel()));
     }
 
@@ -42,7 +42,7 @@ public record SimpleWebSocketPipeTests(ITestOutputHelper Output)
         await server.DisposeAsync();
 
         Task.WaitAny(
-            run.AsTask(),
+            run,
             Task.Delay(100).ContinueWith(_ => throw new TimeoutException()));
     }
 

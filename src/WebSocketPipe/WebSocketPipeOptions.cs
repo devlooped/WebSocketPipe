@@ -28,11 +28,5 @@ public class WebSocketPipeOptions
     /// Allows fine-grained configuration options for the incoming side of the 
     /// websocket pipe. Defaults to <see cref="PipeOptions.Default"/>.
     /// </summary>
-    public PipeOptions InputPipeOptions { get; set; } = PipeOptions.Default;
-
-    /// <summary>
-    /// Allows fine-grained configuration options for the outgoing side of the 
-    /// websocket pipe. Defaults to <see cref="PipeOptions.Default"/>.
-    /// </summary>
-    public PipeOptions OutputPipeOptions { get; set; } = PipeOptions.Default;
+    public PipeOptions InputPipeOptions { get; set; } = new PipeOptions(useSynchronizationContext: false);
 }

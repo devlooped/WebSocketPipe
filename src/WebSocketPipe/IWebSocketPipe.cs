@@ -41,7 +41,7 @@ public interface IWebSocketPipe : IDuplexPipe, IDisposable
     /// <param name="closeStatusDescription">Optional close status description to use if the underlying 
     /// <see cref="WebSocket"/> is closed.</param>
     /// <returns></returns>
-    public ValueTask CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null);
+    public Task CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null);
 
     /// <summary>
     /// Starts populating the <see cref="IDuplexPipe.Input"/> with incoming data from the underlying 
@@ -54,5 +54,5 @@ public interface IWebSocketPipe : IDuplexPipe, IDisposable
     /// <see cref="IDuplexPipe.Output"/> are completed, or an explicit invocation of <see cref="CompleteAsync"/> 
     /// is executed.
     /// </returns>
-    public ValueTask RunAsync(CancellationToken cancellation = default);
+    public Task RunAsync(CancellationToken cancellation = default);
 }

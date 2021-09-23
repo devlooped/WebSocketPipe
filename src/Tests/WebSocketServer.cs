@@ -51,7 +51,7 @@ public record WebSocketServer(Uri Uri, Task RunTask, CancellationTokenSource Can
                 if (pipeBehavior != null)
                 {
                     using var pipe = WebSocketPipe.Create(websocket, options);
-                    await Task.WhenAll(pipeBehavior(pipe), pipe.RunAsync(cts.Token).AsTask());
+                    await Task.WhenAll(pipe.RunAsync(cts.Token), pipeBehavior(pipe));
                 }
                 else if (socketBehavior != null)
                 {
