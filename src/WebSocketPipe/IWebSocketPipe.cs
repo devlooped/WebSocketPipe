@@ -13,17 +13,20 @@ namespace Devlooped.Net;
 public interface IWebSocketPipe : IDuplexPipe, IDisposable
 {
     /// <summary>
-    /// Indicates the reason why the remote endpoint initiated the close handshake.
+    /// Indicates the reason for the close handshake.
     /// </summary>
     public WebSocketCloseStatus? CloseStatus { get; }
+
     /// <summary>
-    /// Allows the remote endpoint to describe the reason why the connection was closed.
+    /// Allows describing the reason why the connection was closed.
     /// </summary>
     public string? CloseStatusDescription { get; }
+    
     /// <summary>
-    /// Returns the current state of the underlying WebSocket connection.
+    /// Returns the current state of the underlying <see cref="WebSocket"/> connection.
     /// </summary>
     public WebSocketState State { get; }
+    
     /// <summary>
     /// Gets the subprotocol that was negotiated during the opening handshake.
     /// </summary>
