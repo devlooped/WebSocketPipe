@@ -21,12 +21,12 @@ public interface IWebSocketPipe : IDuplexPipe, IDisposable
     /// Allows describing the reason why the connection was closed.
     /// </summary>
     public string? CloseStatusDescription { get; }
-    
+
     /// <summary>
     /// Returns the current state of the underlying <see cref="WebSocket"/> connection.
     /// </summary>
     public WebSocketState State { get; }
-    
+
     /// <summary>
     /// Gets the subprotocol that was negotiated during the opening handshake.
     /// </summary>
