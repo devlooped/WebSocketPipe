@@ -16,7 +16,7 @@ public record EndToEnd(ITestOutputHelper Output)
         var client = new ClientWebSocket();
 
         await client.ConnectAsync(server.Uri, CancellationToken.None);
-        using var pipe = WebSocketPipe.Create(client, closeWhenCompleted: true);
+        using var pipe = client.CreatePipe(closeWhenCompleted: true);
 
         var read = Task.Run(async () =>
         {
