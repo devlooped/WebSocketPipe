@@ -31,6 +31,12 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: ⚙ dotnet 6.0.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+          include-prerelease: true
+
       - name: ✓ ensure format
         run: |
           dotnet tool update -g dotnet-format --version 5.0.*
@@ -50,6 +56,12 @@ jobs:
         with: 
           submodules: recursive
           fetch-depth: 0
+
+      - name: ⚙ dotnet 6.0.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+          include-prerelease: true
 
       - name: 🙏 build
         run: dotnet build -m:1 -p:VersionLabel="$GITHUB_REF.$GITHUB_RUN_NUMBER"
