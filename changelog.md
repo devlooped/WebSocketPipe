@@ -1,5 +1,13 @@
 
 
+## [v0.9.0](https://github.com/devlooped/WebSocketPipe/tree/v0.9.0) (2021-10-04)
+
+[Full Changelog](https://github.com/devlooped/WebSocketPipe/compare/v0.8.1...v0.9.0)
+
+:sparkles: Implemented enhancements:
+
+- Add CreatePipe extension method for WebSocket [\#8](https://github.com/devlooped/WebSocketPipe/issues/8)
+
 ## [v0.8.1](https://github.com/devlooped/WebSocketPipe/tree/v0.8.1) (2021-09-23)
 
 [Full Changelog](https://github.com/devlooped/WebSocketPipe/compare/v0.8.0...v0.8.1)
