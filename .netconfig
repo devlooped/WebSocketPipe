@@ -7,6 +7,9 @@
 [file "readme.md"]
 	url = https://github.com/devlooped/oss/blob/main/readme.md
 	skip
+[file "SponsorLink.sln"]
+	url = https://github.com/devlooped/oss/blob/main/SponsorLink.sln
+	skip
 [file ".github/workflows/release-artifacts.yml"]
 	url = https://github.com/devlooped/oss/blob/main/.github/workflows/release-artifacts.yml
 	skip
