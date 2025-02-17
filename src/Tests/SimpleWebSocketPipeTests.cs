@@ -41,7 +41,7 @@ public record SimpleWebSocketPipeTests(ITestOutputHelper Output)
 
         await server.DisposeAsync();
 
-        Task.WaitAny(
+        await Task.WhenAny(
             run,
             Task.Delay(100).ContinueWith(_ => throw new TimeoutException()));
     }
