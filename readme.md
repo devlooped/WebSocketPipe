@@ -6,7 +6,7 @@ High-performance System.IO.Pipelines API adapter for System.Net.WebSockets
 [![Version](https://img.shields.io/nuget/vpre/WebSocketPipe.svg?color=royalblue)](https://www.nuget.org/packages/WebSocketPipe)
 [![Downloads](https://img.shields.io/nuget/dt/WebSocketPipe.svg?color=green)](https://www.nuget.org/packages/WebSocketPipe)
 [![License](https://img.shields.io/github/license/devlooped/WebSocketPipe.svg?color=blue)](https://github.com/devlooped/WebSocketPipe/blob/main/license.txt)
-[![Build](https://github.com/devlooped/WebSocketPipe/workflows/build/badge.svg?branch=main)](https://github.com/devlooped/WebSocketPipe/actions)
+[![Build](https://github.com/devlooped/WebSocketPipe/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/devlooped/WebSocketPipe/actions)
 
 <!-- #content -->
 # Usage
@@ -136,7 +136,7 @@ async Task Echo(IDuplexPipe pipe)
 # Dogfooding
 
 [![CI Version](https://img.shields.io/endpoint?url=https://shields.kzu.io/vpre/WebSocketPipe/main&label=nuget.ci&color=brightgreen)](https://pkg.kzu.io/index.json)
-[![Build](https://github.com/devlooped/WebSocketPipe/workflows/build/badge.svg?branch=main)](https://github.com/devlooped/WebSocketPipe/actions)
+[![Build](https://github.com/devlooped/WebSocketPipe/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/devlooped/WebSocketPipe/actions)
 
 We also produce CI packages from branches and pull requests so you can dogfood builds as quickly as they are produced. 
 
