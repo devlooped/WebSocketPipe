@@ -24,9 +24,17 @@ updates:
     Extensions:
       patterns:
         - "Microsoft.Extensions*"
+      exclude-patterns:
+        - "Microsoft.Extensions.AI*"
+    ExtensionsAI:
+      patterns:
+        - "Microsoft.Extensions.AI*"
     Web:
       patterns:
         - "Microsoft.AspNetCore*"
+    OpenTelemetry:
+      patterns:
+        - "OpenTelemetry*"
     Tests:
       patterns:
         - "Microsoft.NET.Test*"
@@ -38,3 +46,6 @@ updates:
     ProtoBuf:
       patterns:
         - "protobuf-*"
+    Spectre:
+      patterns:
+        - "Spectre.Console*"
