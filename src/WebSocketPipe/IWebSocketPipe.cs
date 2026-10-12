@@ -15,22 +15,22 @@ public interface IWebSocketPipe : IDuplexPipe, IDisposable
     /// <summary>
     /// Indicates the reason for the close handshake.
     /// </summary>
-    public WebSocketCloseStatus? CloseStatus { get; }
+    WebSocketCloseStatus? CloseStatus { get; }
 
     /// <summary>
     /// Allows describing the reason why the connection was closed.
     /// </summary>
-    public string? CloseStatusDescription { get; }
+    string? CloseStatusDescription { get; }
 
     /// <summary>
     /// Returns the current state of the underlying <see cref="WebSocket"/> connection.
     /// </summary>
-    public WebSocketState State { get; }
+    WebSocketState State { get; }
 
     /// <summary>
     /// Gets the subprotocol that was negotiated during the opening handshake.
     /// </summary>
-    public string? SubProtocol { get; }
+    string? SubProtocol { get; }
 
     /// <summary>
     /// Completes both the <see cref="IDuplexPipe.Input"/> and <see cref="IDuplexPipe.Output"/> 
@@ -44,7 +44,7 @@ public interface IWebSocketPipe : IDuplexPipe, IDisposable
     /// <param name="closeStatusDescription">Optional close status description to use if the underlying 
     /// <see cref="WebSocket"/> is closed.</param>
     /// <returns></returns>
-    public Task CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null);
+    Task CompleteAsync(WebSocketCloseStatus? closeStatus = null, string? closeStatusDescription = null);
 
     /// <summary>
     /// Starts populating the <see cref="IDuplexPipe.Input"/> with incoming data from the underlying 
@@ -57,5 +57,5 @@ public interface IWebSocketPipe : IDuplexPipe, IDisposable
     /// <see cref="IDuplexPipe.Output"/> are completed, or an explicit invocation of <see cref="CompleteAsync"/> 
     /// is executed.
     /// </returns>
-    public Task RunAsync(CancellationToken cancellation = default);
+    Task RunAsync(CancellationToken cancellation = default);
 }
